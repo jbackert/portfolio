@@ -1,65 +1,31 @@
 <?php
 
-//TODO: create a help function with usage rpnCalc.php "3 4 5 * -"
-//TODO: do a check for the existence of a string to calculate and respond accordingly if not
-//TODO: catch error thrown by calculate()
-//TODO: check for invalid data (not operator or number and return message
-//TODO: refactor the calculator into a class that is created - also add unit tests
+include_once("ReversePolishNotationCalculator.php");
 
-$stack = new \SplStack();
+$options = getopt("i:h::");
 
-$stringToProcess = explode(" ", $argv[1]);
+if (array_key_exists("h", $options)) {
+    echo "This reverse Polish Notation Calculator can process the following functions: \n";
+    echo "Addition \n";
+    echo "Subtraction \n";
+    echo "Multiplication \n";
+    echo "Division \n";
+    echo "\n";
+    echo "To process an equation run: rpnCalc.php -i \"<<YOUR_STRING>>\"\n";
+    echo "Ex: php rpnCalc.php -i \"3 4 +\" will return 7 \n";
 
-for($i=count($stringToProcess)-1; $i>=0; $i--) {
-    $stack->push($stringToProcess[$i]);
+    exit();
 }
 
-$tempStorage = [];
-$i=0;
-while($stack->count() > 0) {
-    $topOfStack = $stack->pop();
+try {
+    //$calculator = new ReversePolishNotationCalculator($options["i"]);
 
-    if (isOperator($topOfStack)) {
+    //echo "The answer is " . $calculator->calculate() . "\n";
 
-        $operator = $topOfStack;
-        $stack->push(calculate($operator, $tempStorage[$i-1], $tempStorage[$i-2]));
-        $i -= 2;
+    echo "The answer is " . ReversePolishNotationCalculator::calculate($options["i"]) . "\n";
 
-    } else {
-        $tempStorage[$i] = $topOfStack;
-        $i++;
-    }
-}
+} catch (Exception $exception) {
 
-echo "The answer is " . $tempStorage[0];
-
-function isOperator($string) {
-    switch ($string) {
-        case "*":
-            return true;
-        case "+":
-            return true;
-        case "/":
-            return true;
-        case "-":
-            return true;
-        default:
-            return false;
-    }
-}
-
-function calculate($operator, $operand1, $operand2) {
-    switch ($operator) {
-        case "*":
-            return $operand1 * $operand2;
-        case "+":
-            return $operand1 + $operand2;
-        case "/":
-            return $operand2 / $operand1;
-        case "-":
-            return $operand2 - $operand1;
-        default:
-            //TODO: throw error
-    }
+    echo $exception->getMessage() . "\n";
 }
 
